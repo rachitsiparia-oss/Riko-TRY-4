@@ -582,12 +582,13 @@ async function loadDynamicMenu() {
             categoryItems.forEach((item, index) => {
                 const price = Math.round(item.price);
                 const desc = item.description || '';
+                const imageSrc = resolveImageSrc(item.image_url);
                 
                 // Construct the exact structure of card elements
                 html += `
                     <!-- Dynamic Card ${index + 1}: ${escapeHtml(item.name)} -->
                     <div class="menu-dish-card-bespoke" data-hover="expand">
-                        <img src="${apiBase}/${item.image_url}" alt="${escapeHtml(item.name)} | ${price} - ${escapeHtml(desc)}" class="menu-dish-visual">
+                        <img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(item.name)} | ${price} - ${escapeHtml(desc)}" class="menu-dish-visual">
                         <div class="menu-dish-info-overlay">
                             <div class="menu-dish-header-row">
                                 <h3 class="menu-dish-name">${escapeHtml(item.name)}</h3>
@@ -609,6 +610,13 @@ async function loadDynamicMenu() {
 
 function getApiBase() {
     return '';
+}
+
+function resolveImageSrc(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    if (/^https?:\/\//i.test(raw)) return raw;
+    return `/${raw.replace(/^\/+/, '')}`;
 }
 
 function escapeHtml(unsafe) {
